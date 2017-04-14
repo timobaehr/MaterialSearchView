@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.speech.RecognizerIntent;
+import android.support.annotation.DrawableRes;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -397,6 +398,14 @@ public class MaterialSearchView extends FrameLayout implements Filter.FilterList
         mAdapter = adapter;
         mSuggestionsListView.setAdapter(adapter);
         startFilter(mSearchSrcTextView.getText());
+    }
+
+    public void setSuggestions(String[] suggestions, @DrawableRes int suggestionIconRes) {
+        SuggestionItem[] suggestionItems = new SuggestionItem[suggestions.length];
+        for (int i = 0; i < suggestions.length; i++) {
+            String text = suggestions[i];
+            suggestionItems[i] = new SuggestionItem(false, suggestionIconRes, text);
+        }
     }
 
     /**
