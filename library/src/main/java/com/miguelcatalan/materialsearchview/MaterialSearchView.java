@@ -406,6 +406,7 @@ public class MaterialSearchView extends FrameLayout implements Filter.FilterList
             String text = suggestions[i];
             suggestionItems[i] = new SuggestionItem(false, suggestionIconRes, text);
         }
+        setSuggestions(suggestionItems);
     }
 
     /**
