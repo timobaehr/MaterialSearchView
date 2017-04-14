@@ -22,23 +22,21 @@ import java.util.List;
  */
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
-    private ArrayList<String> data;
-    private String[] suggestions;
-    private Drawable suggestionIcon;
+    private ArrayList<SuggestionItem> data;
+    private SuggestionItem[] suggestions;
     private LayoutInflater inflater;
     private boolean ellipsize;
 
-    public SearchAdapter(Context context, String[] suggestions) {
+    public SearchAdapter(Context context, SuggestionItem[] suggestions) {
         inflater = LayoutInflater.from(context);
         data = new ArrayList<>();
         this.suggestions = suggestions;
     }
 
-    public SearchAdapter(Context context, String[] suggestions, Drawable suggestionIcon, boolean ellipsize) {
+    public SearchAdapter(Context context, SuggestionItem[] suggestions, boolean ellipsize) {
         inflater = LayoutInflater.from(context);
         data = new ArrayList<>();
         this.suggestions = suggestions;
-        this.suggestionIcon = suggestionIcon;
         this.ellipsize = ellipsize;
     }
 
@@ -48,28 +46,29 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
-                if (!TextUtils.isEmpty(constraint)) {
+                //if (!TextUtils.isEmpty(constraint)) {
 
                     // Retrieve the autocomplete results.
-                    List<String> searchData = new ArrayList<>();
+                    List<SuggestionItem> searchData = new ArrayList<>();
 
-                    for (String string : suggestions) {
-                        if (string.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
-                            searchData.add(string);
+                    for (SuggestionItem suggestionItem : suggestions) {
+                        String suggestionText = suggestionItem.getText();
+                        if (suggestionItem.isSticky() || suggestionText.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                            searchData.add(suggestionItem);
                         }
                     }
 
                     // Assign the data to the FilterResults
                     filterResults.values = searchData;
                     filterResults.count = searchData.size();
-                }
+                //}
                 return filterResults;
             }
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 if (results.values != null) {
-                    data = (ArrayList<String>) results.values;
+                    data = (ArrayList<SuggestionItem>) results.values;
                     notifyDataSetChanged();
                 }
             }
@@ -83,7 +82,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public Object getItem(int position) {
+    public SuggestionItem getItem(int position) {
         return data.get(position);
     }
 
@@ -105,9 +104,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             viewHolder = (SuggestionsViewHolder) convertView.getTag();
         }
 
-        String currentListData = (String) getItem(position);
+        SuggestionItem currentListData = getItem(position);
 
-        viewHolder.textView.setText(currentListData);
+        viewHolder.textView.setText(currentListData.getText());
+        viewHolder.imageView.setImageResource(currentListData.getIconRes());
         if (ellipsize) {
             viewHolder.textView.setSingleLine();
             viewHolder.textView.setEllipsize(TextUtils.TruncateAt.END);
@@ -123,10 +123,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
         public SuggestionsViewHolder(View convertView) {
             textView = (TextView) convertView.findViewById(R.id.suggestion_text);
-            if (suggestionIcon != null) {
-                imageView = (ImageView) convertView.findViewById(R.id.suggestion_icon);
-                imageView.setImageDrawable(suggestionIcon);
-            }
+            imageView = (ImageView) convertView.findViewById(R.id.suggestion_icon);
         }
     }
 }

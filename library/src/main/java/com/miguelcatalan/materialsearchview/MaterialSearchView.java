@@ -74,7 +74,7 @@ public class MaterialSearchView extends FrameLayout implements Filter.FilterList
     private boolean ellipsize = false;
 
     private boolean allowVoiceSearch;
-    private Drawable suggestionIcon;
+    //private Drawable suggestionIcon;
 
     private Context mContext;
 
@@ -130,10 +130,6 @@ public class MaterialSearchView extends FrameLayout implements Filter.FilterList
 
             if (a.hasValue(R.styleable.MaterialSearchView_searchSuggestionBackground)) {
                 setSuggestionBackground(a.getDrawable(R.styleable.MaterialSearchView_searchSuggestionBackground));
-            }
-
-            if (a.hasValue(R.styleable.MaterialSearchView_searchSuggestionIcon)) {
-                setSuggestionIcon(a.getDrawable(R.styleable.MaterialSearchView_searchSuggestionIcon));
             }
 
             if (a.hasValue(R.styleable.MaterialSearchView_android_inputType)) {
@@ -336,10 +332,6 @@ public class MaterialSearchView extends FrameLayout implements Filter.FilterList
         mBackBtn.setImageDrawable(drawable);
     }
 
-    public void setSuggestionIcon(Drawable drawable) {
-        suggestionIcon = drawable;
-    }
-
     public void setInputType(int inputType) {
         mSearchSrcTextView.setInputType(inputType);
     }
@@ -412,16 +404,16 @@ public class MaterialSearchView extends FrameLayout implements Filter.FilterList
      *
      * @param suggestions array of suggestions
      */
-    public void setSuggestions(String[] suggestions) {
+    public void setSuggestions(SuggestionItem[] suggestions) {
         if (suggestions != null && suggestions.length > 0) {
             mTintView.setVisibility(VISIBLE);
-            final SearchAdapter adapter = new SearchAdapter(mContext, suggestions, suggestionIcon, ellipsize);
+            final SearchAdapter adapter = new SearchAdapter(mContext, suggestions, ellipsize);
             setAdapter(adapter);
 
             setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    setQuery((String) adapter.getItem(position), submit);
+                    setQuery(adapter.getItem(position).getText(), submit);
                 }
             });
         } else {
